@@ -1,3 +1,5 @@
+from . import db
+
 class Recipe(object):
 	def __init__(self,name,ingredients):
 		self.Name = name.lower()
