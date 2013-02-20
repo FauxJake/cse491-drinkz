@@ -1,0 +1,9 @@
+import drinkz.db
+
+drinkz.db.add_bottle_type('Johnnie Walker', 'Black Label', 'blended scotch')
+drinkz.db.add_to_inventory('Johnnie Walker', 'Black Label', '1000 ml')
+
+print 'Manufacturer\tLiquor'
+print '------------\t------'
+for mfg, liquor in drinkz.db.get_liquor_inventory():
+    print '%s\t%s' % (mfg, liquor)
