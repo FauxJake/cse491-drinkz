@@ -1,21 +1,59 @@
 """
 Database functionality for drinkz information.
+recipes implemented as a set in order to avoid duplicates
 """
 
 # private singleton variables at module level
 _bottle_types_db = set()
 _inventory_db = dict()
+_recipes = set()
+
+
 
 def _reset_db():
     "A method only to be used during testing -- toss the existing db info."
-    global _bottle_types_db, _inventory_db
+    global _bottle_types_db, _inventory_db, _recipes
     _bottle_types_db = set()
     _inventory_db = dict()
+    _recipes = set()
 
 # exceptions in Python inherit from Exception and generally don't need to
 # override any methods.
 class LiquorMissing(Exception):
     pass
+
+class DuplicateRecipeName(Exception):
+    pass
+
+def add_recipe(recipe):
+
+    if not get_recipe(recipe):
+        _recipes.add(recipe)
+    else:
+        err = "Recipe '%s', is already in db" % (recipe.Name)
+        raise DuplicateRecipeName(err)
+    
+
+def get_all_recipes():
+    for r in _recipes:
+        yield r
+
+def get_recipe(name):
+    if type(name) is str:
+        for r in get_all_recipes():
+            print "r.Name: ", r.Name, "\nname: ", name
+            if r.Name == name:
+                return r
+    #recipe type
+    else:
+        for r in get_all_recipes():
+            print "r.Name: ", r.Name, "\nname: ", name.Name
+            if r.Name == name.Name:
+                return r
+    print "NOTHING"
+    return False
+
+
 def convert_to_ml(amount):
     data = amount.split()
     amount = data[0]
@@ -33,6 +71,8 @@ def convert_to_ml(amount):
             total += float(amount) * 946.353
         elif units == "pt" or units == "pint":
             total += float(amount) * 473.176
+        elif units == "liter":
+            total += 1000.0
         return total
 
 
@@ -62,6 +102,12 @@ def check_inventory(mfg, liquor):
             return True
         
     return False
+
+def check_inventory_for_type(liquor):
+    for key in _inventory_db.keys():
+        if key[1] == liquor or key[0] == liquor:
+            print "key[1]: ", key[1]
+            yield key
 
 def get_liquor_amount(mfg, liquor):
     "Retrieve the total amount of any given liquor currently in inventory."
