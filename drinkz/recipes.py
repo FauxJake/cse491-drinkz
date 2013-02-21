@@ -9,7 +9,7 @@ class Recipe(object):
 		Recipe.recipeCnt += 1
 
 	def display_count(self):
-		print "Recipie Count: ", Recipe.recipeCnt
+		print "Recipe Count: ", Recipe.recipeCnt
 
 	def need_ingredients(self):
 		missing = []
