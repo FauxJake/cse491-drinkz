@@ -4,8 +4,12 @@ recipes implemented as a set in order to avoid duplicates
 """
 
 # private singleton variables at module level
-_bottle_types_db = set()
+
+#keyed by tuples of (mfg, liquor) with the value in the dictionary being the total quantity.
 _inventory_db = dict()
+#'set' containing tuples of (mfg, liquor, typ)
+_bottle_types_db = set() 
+#'set' containing tuples of the form: ({name}, list((ingridient name, amount),(n,a), etc.))
 _recipes = set()
 
 
@@ -72,7 +76,7 @@ def convert_to_ml(amount):
         elif units == "pt" or units == "pint":
             total += float(amount) * 473.176
         elif units == "liter":
-            total += 1000.0
+            total += float(amount) * 1000.0
         return total
 
 
@@ -103,10 +107,11 @@ def check_inventory(mfg, liquor):
         
     return False
 
-def check_inventory_for_type(liquor):
-    for key in _inventory_db.keys():
-        if key[1] == liquor or key[0] == liquor:
-            print "key[1]: ", key[1]
+def check_inventory_for_type(typ):
+    for key in _bottle_types_db:
+        print "in check_inventory_for_type, searching for: ", typ
+        if key[2] == typ:
+            print "key found: ",key
             yield key
 
 def get_liquor_amount(mfg, liquor):
