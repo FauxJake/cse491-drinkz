@@ -59,6 +59,7 @@ def get_recipe(name):
 
 
 def convert_to_ml(amount):
+    print amount
     data = amount.split()
     amount = data[0]
     units = data[1].lower()
@@ -75,7 +76,7 @@ def convert_to_ml(amount):
             total += float(amount) * 946.353
         elif units == "pt" or units == "pint":
             total += float(amount) * 473.176
-        elif units == "liter":
+        elif units == "liter" or units == "L":
             total += float(amount) * 1000.0
         return total
 

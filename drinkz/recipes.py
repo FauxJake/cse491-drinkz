@@ -1,4 +1,4 @@
-from . import db
+import db
 
 class Recipe(object):
 	recipeCnt = 0
