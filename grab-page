@@ -13,17 +13,9 @@ def main(args):
 	else:
 		s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 
-		app = SimpleApp()
-
 		host = str(args[1])
 		port = int(args[2])
-		    
-		httpd = make_server('', port, app)
-		
-
-		connection = "http://%s:%d/" % (host, port)
-		print connection
-
+			
 		try:
 			address = socket.gethostbyname(host);
 		except socket.gaierror:
@@ -31,14 +23,16 @@ def main(args):
 			return 0
 
 		s.connect((host,port))
-		s.send("GET / HTTP/1.1")
+		s.send("GET / HTTP/1.0\r\n\r\n")
 
-		buf = s.recv(1000)
+		while 1:
+			buf = s.recv(1000)
+			if not buf:
+				break
+			sys.stdout.write(buf)
 		#waits inf for response i think... why no response?
 
-		print buf
-			
-		s.close()
+		#print buf
 
 if __name__ == '__main__':
    exit_code = main(sys.argv)
