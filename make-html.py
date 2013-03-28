@@ -1,10 +1,8 @@
 import os
 import drinkz.db, drinkz.recipes
 
-basepath = os.path.dirname(__file__)
-filepath = os.path.abspath(os.path.join(basepath, "bin","db.txt"))
-print filepath
-drinkz.db.load(filepath)
+
+drinkz.db.load_db('db.txt')
 
 try:
     os.mkdir('html')
