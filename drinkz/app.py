@@ -98,6 +98,7 @@ class SimpleApp(object):
 			if environ.get('CONTENT_LENGTH'):
 				length = int(environ['CONTENT_LENGTH'])
 				body = environ['wsgi.input'].read(length)
+				print body
 				response = self._dispatch(body) + '\n'
 				start_response('200 OK', [('Content-Type', 'application/json')])
 
@@ -132,6 +133,10 @@ class SimpleApp(object):
 		return str(db.convert_to_ml(amount))
 
 	def rpc_get_recipe_names(self):
+		basepath = os.path.dirname(__file__)
+		filepath = os.path.abspath(os.path.join(basepath, "..","db.txt"))
+		db.load_db(filepath)
+
 		recipes = ""
 		for r in db.get_all_recipes():
 			recipes += r.Name
@@ -140,9 +145,13 @@ class SimpleApp(object):
 		return recipes
 
 	def rpc_get_liquor_inventory(self):
+		basepath = os.path.dirname(__file__)
+		filepath = os.path.abspath(os.path.join(basepath, "..","db.txt"))
+		db.load_db(filepath)
+
 		inventory = ""
 		for i in db._inventory_db:
-			inventory += i
+			inventory += str(i)
 			inventory += "\n"
 
 		return inventory

@@ -9,6 +9,7 @@ def test_convert_rpc():
 
 	app_obj = app.SimpleApp()
 	httpd = make_server('', port, app)
+	httpd.serve_forever()
 	server_base = "http://%s:%d/" % (socket.getfqdn(), port)
 
 	results = json_rpc_client.call_remote(server_base, method='convert_units_to_ml', params=["32 liter"], id=1)
@@ -21,6 +22,7 @@ def test_recipe_rpc():
 
 	app_obj = app.SimpleApp()
 	httpd = make_server('', port, app)
+	httpd.handle_request()
 	server_base = "http://%s:%d/" % (socket.getfqdn(), port)
 
 	#add some test data
@@ -53,6 +55,8 @@ def test_inventory_rpc():
 
 	app_obj = app.SimpleApp()
 	httpd = make_server('', port, app)
+	httpd.handle_request()
+
 	server_base = "http://%s:%d/" % (socket.getfqdn(), port)
 
 	#add some test data
