@@ -14,8 +14,6 @@ def main(args):
 		s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 
 		app = SimpleApp()
-		print "host: ", args[1]
-		print "port: ", args[2]
 
 		host = str(args[1])
 		port = int(args[2])
@@ -36,7 +34,8 @@ def main(args):
 		s.send("GET / HTTP/1.1")
 
 		buf = s.recv(1000)
-		print "there"
+		#waits inf for response i think... why no response?
+
 		print buf
 			
 		s.close()

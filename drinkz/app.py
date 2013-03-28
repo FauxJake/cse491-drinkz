@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 from wsgiref.simple_server import make_server
-import urlparse
+import urlparse, os
 import json as simplejson
 import db, recipes
 
@@ -19,17 +19,14 @@ html_headers = [('Content-type', 'text/html')]
 
 class SimpleApp(object):
 	def __call__(self, environ, start_response):
-
 		path = environ['PATH_INFO']
-		print "PATH: ", path
 		fn_name = dispatch.get(path, 'error')
-		print "FUNCTION: ", fn_name
+		print os.path.realpath(__file__)
 
         # retrieve 'self.fn_name' where 'fn_name' is the
         # value in the 'dispatch' dictionary corresponding to
         # the 'path'.
 		fn = getattr(self, fn_name, None)
-		print "FN: ",fn
 
 		if fn is None:
 			start_response("404 Not Found", html_headers)
@@ -48,12 +45,19 @@ class SimpleApp(object):
 		return [data]
 
 	def inventory(self, environ, start_response):
+		basepath = os.path.dirname(__file__)
+		filepath = os.path.abspath(os.path.join(basepath, "..","db.txt"))
+		db.load_db(filepath)
+		print db._inventory_db
 		data = inventory()
 
 		start_response('200 OK', list(html_headers))
 		return [data]
 
 	def types(self, environ, start_response):
+		basepath = os.path.dirname(__file__)
+		filepath = os.path.abspath(os.path.join(basepath, "..","db.txt"))
+		db.load_db(filepath)
 		data = liq_typs()
 
 		start_response('200 OK', list(html_headers))
@@ -112,14 +116,10 @@ class SimpleApp(object):
 
 	def _dispatch(self, json):
 		rpc_request = self._decode(json)
-		print rpc_request
 
 		method = rpc_request['method']
 		params = rpc_request['params']
 
-		for i in params:
-			print params
-        
 		rpc_fn_name = 'rpc_' + method
 		fn = getattr(self, rpc_fn_name)
 		result = fn(*params)
@@ -191,8 +191,10 @@ def recipes():
 
 def liq_typs():
 	data = head_html("das liquidz") + "<ol>" + "<h1>Types of Liquor</h1>"
+	print db._bottle_types_db
 	for i in db.get_liquor_inventory():
-		data += "<li>%s</li>" % i
+		print i
+		data += "<li>%s, %s</li>" % (i[0],i[1])
 	data += "<ol></body></html>"
 	return data
 

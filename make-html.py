@@ -1,24 +1,10 @@
 import os
 import drinkz.db, drinkz.recipes
 
-drinkz.db.add_bottle_type('Johnnie Walker', 'black label', 'blended scotch')
-drinkz.db.add_to_inventory('Johnnie Walker', 'black label', '500 ml')
-
-drinkz.db.add_bottle_type('Uncle Herman\'s', 'moonshine', 'blended scotch')
-drinkz.db.add_to_inventory('Uncle Herman\'s', 'moonshine', '5 liter')
-        
-drinkz.db.add_bottle_type('Gray Goose', 'vodka', 'unflavored vodka')
-drinkz.db.add_to_inventory('Gray Goose', 'vodka', '1 liter')
-
-drinkz.db.add_bottle_type('Rossi', 'extra dry vermouth', 'vermouth')
-drinkz.db.add_to_inventory('Rossi', 'extra dry vermouth', '24 oz')
-
-r = drinkz.recipes.Recipe('scotch on the rocks', [('blended scotch',
-                                                   '4 oz')])
-s = drinkz.recipes.Recipe('five oclock somewhere', [('blended scotch',
-                                                   '4 oz'),('tequila','1 gal')])
-drinkz.db.add_recipe(r)
-drinkz.db.add_recipe(s)
+basepath = os.path.dirname(__file__)
+filepath = os.path.abspath(os.path.join(basepath, "bin","db.txt"))
+print filepath
+drinkz.db.load(filepath)
 
 try:
     os.mkdir('html')

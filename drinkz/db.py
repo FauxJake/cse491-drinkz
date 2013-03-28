@@ -14,12 +14,15 @@ _bottle_types_db = set()
 _recipes = set()
 
 def save_db(filename):
-	fp = open(filename, 'wb')
+	try:
+		fp = open(filename, 'wb')
+		tosave = (_bottle_types_db, _inventory_db)
+		dump(tosave, fp)
 
-	tosave = (_bottle_types_db, _inventory_db)
-	dump(tosave, fp)
-
-	fp.close()
+		fp.close()
+	except Exception, e:
+		pass
+	
 
 def load_db(filename):
 	global _bottle_types_db, _inventory_db
