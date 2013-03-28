@@ -27,15 +27,13 @@ def main(args):
 		print connection
 
 		try:
-			address = socket.getfqdn();
+			address = socket.gethostbyname(host);
 		except socket.gaierror:
 			print "Nope"
 			return 0
 
 		s.connect((host,port))
-		httpd.serve_forever()
-		s.send("GET / HTTP/1.0")
-		print "here"
+		s.send("GET / HTTP/1.1")
 
 		buf = s.recv(1000)
 		print "there"

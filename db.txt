@@ -1,0 +1,29 @@
+(c__builtin__
+set
+p1
+((lp2
+(S'Johnnie Walker'
+p3
+S'black label'
+p4
+S'blended scotch'
+p5
+tp6
+a(S"Uncle Herman's"
+p7
+S'moonshine'
+p8
+g5
+tp9
+atRp10
+(dp11
+(g3
+g4
+tp12
+F500
+s(g7
+g8
+tp13
+F5000
+stp14
+.
