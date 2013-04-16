@@ -2,11 +2,11 @@
 set
 p1
 ((lp2
-(S'Johnnie Walker'
+(S'Smirnoff - Apple'
 p3
-S'Black Label'
+S'Vodka'
 p4
-S'blended scotch'
+S'Flavored Vodka'
 p5
 tp6
 atRp7

@@ -3,6 +3,7 @@ Database functionality for drinkz information.
 recipes implemented as a set in order to avoid duplicates
 """
 from cPickle import dump, load
+import os
 
 # private singleton variables at module level
 
@@ -15,23 +16,35 @@ _recipes = set()
 
 def save_db(filename):
 	try:
+		print "in save:\nfileName: %s\n" % filename
 		fp = open(filename, 'wb')
 		tosave = (_bottle_types_db, _inventory_db)
+		print "ToSave: ", tosave
 		dump(tosave, fp)
 
 		fp.close()
+		print "done"
+		return True
 	except Exception, e:
-		pass
+		return False
 	
 
 def load_db(filename):
-	global _bottle_types_db, _inventory_db
-	fp = open(filename, 'rb')
+	try:
+		basepath = os.path.dirname(__file__)
+		filepath = os.path.abspath(os.path.join(basepath, "..",filename))
+		global _bottle_types_db, _inventory_db
+		fp = open(filename, 'rb')
 
-	loaded = load(fp)
-	(_bottle_types_db, _inventory_db) = loaded
+		loaded = load(fp)
+		(_bottle_types_db, _inventory_db) = loaded
 
-	fp.close()
+		print "LOADED: ", loaded
+
+		fp.close()
+	except Exception, e:
+		raise e
+	
 
 def _reset_db():
 	"A method only to be used during testing -- toss the existing db info."
@@ -39,6 +52,7 @@ def _reset_db():
 	_bottle_types_db = set()
 	_inventory_db = dict()
 	_recipes = set()
+	save_db('db.txt')
 
 # exceptions in Python inherit from Exception and generally don't need to
 # override any methods.
@@ -48,8 +62,15 @@ class LiquorMissing(Exception):
 class DuplicateRecipeName(Exception):
 	pass
 
-def add_recipe(recipe):
+def available_recipes():
+	results = []
+	for r in _recipes:
+		if not r.need_ingredients():
+			results.append(r)
 
+	return results
+
+def add_recipe(recipe):
 	if not get_recipe(recipe):
 		_recipes.add(recipe)
 	else:
@@ -64,21 +85,21 @@ def get_all_recipes():
 def get_recipe(name):
 	if type(name) is str:
 		for r in get_all_recipes():
-			print "r.Name: ", r.Name, "\nname: ", name
+			#print "r.Name: ", r.Name, "\nname: ", name
 			if r.Name == name:
 				return r
 	#recipe type
 	else:
 		for r in get_all_recipes():
-			print "r.Name: ", r.Name, "\nname: ", name.Name
+			#print "r.Name: ", r.Name, "\nname: ", name.Name
 			if r.Name == name.Name:
 				return r
-	print "NOTHING"
+	#print "NOTHING"
 	return False
 
 
 def convert_to_ml(amount):
-	print amount
+	#print amount
 	data = amount.split()
 	amount = data[0]
 	units = data[1].lower()
@@ -102,9 +123,22 @@ def convert_to_ml(amount):
 
 def add_bottle_type(mfg, liquor, typ):
 	"Add the given bottle type into the drinkz database."
-	_bottle_types_db.add((mfg, liquor, typ))
+	try:
+		_bottle_types_db.add((mfg, liquor, typ))
+		print "added to database"
+		print _bottle_types_db
+
+		save_db('db.txt')
+		"saved database"
+		return True
+	except Exception, e:
+		print "exception" + e.message
+		return False
+	
 
 def _check_bottle_type_exists(mfg, liquor):
+	load_db('db.txt')
+	print "DB: ",_inventory_db
 	for (m, l, _) in _bottle_types_db:
 		if mfg == m and liquor == l:
 			return True
@@ -119,6 +153,7 @@ def add_to_inventory(mfg, liquor, amount):
 
 	amount = convert_to_ml(amount)
 	_inventory_db[(mfg,liquor)] = amount
+	save_db('db.txt')
 
 def check_inventory(mfg, liquor):
 	for key in _inventory_db.keys():
@@ -129,9 +164,9 @@ def check_inventory(mfg, liquor):
 
 def check_inventory_for_type(typ):
 	for key in _bottle_types_db:
-		print "in check_inventory_for_type, searching for: ", typ
+		#print "in check_inventory_for_type, searching for: ", typ
 		if key[2] == typ:
-			print "key found: ",key
+			#print "key found: ",key
 			yield key
 
 def get_liquor_amount(mfg, liquor):
@@ -146,5 +181,6 @@ def get_liquor_amount(mfg, liquor):
 
 def get_liquor_inventory():
 	"Retrieve all liquor types in inventory, in tuple form: (mfg, liquor)."
+	load_db('db.txt')
 	for key in _inventory_db.keys():
 		yield key

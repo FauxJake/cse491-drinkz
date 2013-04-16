@@ -1,0 +1,5 @@
+It seems that a lot of the use cases involve the ability for a USER to do things.  So it makes sense to me to implement a user data structre, therefore allowing the posssesion of a unique liquor inventory, as well as the ability to implement various other user-dependant use cases, such as a trading center for liqupr, and the ability for parties to be managed.
+
+The user data structure should be able to store relevent information such as a name, possibly a name for a liquor inventory, a home address maybe for party tracking, and other demographics.  The user data structure should be able to tie itself to a unique liquor inventory, so I propose that the individual liquor inventories be stored in a seperate dictionary of the for key = person_id, val = list of liquor, and there be a liquor_inv id stored in the user data dictionary.
+
+The API could include the ability to display all users, locate them, and view their inventories.  And a json-RPC set of functions could do this similarly.  A user could also modify their data (add/remove liquor).

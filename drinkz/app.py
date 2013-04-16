@@ -5,14 +5,20 @@ import json as simplejson
 import db, recipes
 
 dispatch = {
-    '/' : 'index',
-    '/recipes' : 'recipes',
-    '/error' : 'error',
-    '/inventory' : 'inventory',
-    '/liquor_types' : 'types',
-    '/form' : 'form',
-    '/recv' : 'recv',
-    '/rpc'  : 'dispatch_rpc'
+	'/' : 'index',
+	'/recipes' : 'recipes',
+	'/error' : 'error',
+	'/inventory' : 'inventory',
+	'/liquor_types' : 'types',
+	'/convert' : 'convert',
+	'/enter_liq_types' : 'add_liq_typ',
+	'/recv_addliqtyp' : 'recv_addliqtyp',
+	'/enter_liq_inventory' : 'add_liq_inventory',
+	'/recv_addliqinv' : 'recv_addliqinv',
+	'/add_recipe' : 'add_recipe',
+	'/recv_addrecipe' : 'recv_addrecipe',
+	'/recv_convert' : 'recv_convert',
+	'/rpc'  : 'dispatch_rpc'
 }
 
 html_headers = [('Content-type', 'text/html')]
@@ -23,9 +29,9 @@ class SimpleApp(object):
 		fn_name = dispatch.get(path, 'error')
 		print os.path.realpath(__file__)
 
-        # retrieve 'self.fn_name' where 'fn_name' is the
-        # value in the 'dispatch' dictionary corresponding to
-        # the 'path'.
+		# retrieve 'self.fn_name' where 'fn_name' is the
+		# value in the 'dispatch' dictionary corresponding to
+		# the 'path'.
 		fn = getattr(self, fn_name, None)
 
 		if fn is None:
@@ -33,7 +39,7 @@ class SimpleApp(object):
 			return ["No path %s found" % path]
 
 		return fn(environ, start_response)
-            
+			
 	def index(self, environ, start_response):
 		data = head_html("index") + index() + javascript() + "</body></html>"
 		start_response('200 OK', list(html_headers))
@@ -45,9 +51,7 @@ class SimpleApp(object):
 		return [data]
 
 	def inventory(self, environ, start_response):
-		basepath = os.path.dirname(__file__)
-		filepath = os.path.abspath(os.path.join(basepath, "..","db.txt"))
-		db.load_db(filepath)
+		db.load_db('db.txt')
 		print db._inventory_db
 		data = inventory()
 
@@ -55,9 +59,7 @@ class SimpleApp(object):
 		return [data]
 
 	def types(self, environ, start_response):
-		basepath = os.path.dirname(__file__)
-		filepath = os.path.abspath(os.path.join(basepath, "..","db.txt"))
-		db.load_db(filepath)
+		db.load_db('db.txt')
 		data = liq_typs()
 
 		start_response('200 OK', list(html_headers))
@@ -67,16 +69,16 @@ class SimpleApp(object):
 		status = "404 Not Found"
 		content_type = 'text/html'
 		data = "Couldn't find your stuff."
-       
+	   
 		start_response('200 OK', list(html_headers))
 		return [data]
 
-	def form(self,environ,start_response):
+	def convert(self,environ,start_response):
 		data = form()
 		start_response('200 OK', list(html_headers))
 		return [data]
    
-	def recv(self, environ, start_response):
+	def recv_convert(self, environ, start_response):
 		formdata = environ['QUERY_STRING']
 		results = urlparse.parse_qs(formdata)
 
@@ -88,11 +90,45 @@ class SimpleApp(object):
 		start_response('200 OK', list(html_headers))
 		return [data]
 
+	def add_liq_typ(self,environ,start_response):
+		data = add_liq_form()
+		start_response('200 OK', list(html_headers))
+		return data
+
+	def recv_addliqtyp(self,environ,start_response):
+		formdata = environ['QUERY_STRING']
+		results = urlparse.parse_qs(formdata)
+
+		mfg = results['mfg'][0]
+		liquor = results['liquor'][0]
+		typ = results['typ'][0]
+
+		print "FOMRDATA - mfg: %s Liq: %s Type: %s" % (mfg,liquor,typ)
+
+		try:
+			f = db.add_bottle_type(mfg,liquor,typ)
+
+			db.save_db('db.txt')
+
+			start_response('200 OK',html_headers)
+			anchor = """<a href="/liquor_types">View Liquor Type Database</a>"""
+
+			if f == True:
+				data ="Added %s, %s, %s to bottle type inventory" % (mfg, liquor, typ) + anchor
+			else:
+				data = "An error occured adding %s, %s, %s to bottle type inventory" % (mfg, liquor, typ) + anchor
+			return data
+
+		except Exception, e:
+			start_response('200 OK',html_headers)
+			return """there was an error adding the liquor typ to the db""" + e.message
+
+
 	def dispatch_rpc(self, environ, start_response):
-        # POST requests deliver input data via a file-like handle,
-        # with the size of the data specified by CONTENT_LENGTH;
-        # see the WSGI PEP.
-        
+		# POST requests deliver input data via a file-like handle,
+		# with the size of the data specified by CONTENT_LENGTH;
+		# see the WSGI PEP.
+		
 		if environ['REQUEST_METHOD'].endswith('POST'):
 			body = None
 			if environ.get('CONTENT_LENGTH'):
@@ -104,11 +140,11 @@ class SimpleApp(object):
 
 				return [response]
 
-        # default to a non JSON-RPC error.
+		# default to a non JSON-RPC error.
 		status = "404 Not Found"
 		content_type = 'text/html'
 		data = "Couldn't find your stuff."
-       
+	   
 		start_response('200 OK', list(html_headers))
 		return [data]
 
@@ -167,11 +203,12 @@ def index():
 		<a href="recipes">List of recipes</a>
 		<a href="inventory">Current Inventory</a>
 		<a href="liquor_types">Types of Liquor</a>
-		<a href="form">Unit Converter</a>
+		<a href="convert">Unit Converter</a>
 		<button onclick="Alert()" value="showAlertBox">I'm an Alert Button!</button>
 """
 
 def inventory():
+	print "CURRENT INVENTORY: ", db._bottle_types_db
 	data = head_html("current inventory")
 	data += """\
 <h1>Current Inventory</h1>
@@ -199,24 +236,46 @@ def recipes():
 	return data
 
 def liq_typs():
-	data = head_html("das liquidz") + "<ol>" + "<h1>Types of Liquor</h1>"
+	data = head_html("das liquidz")  + "<h1>Bottle Types of Liquor</h1>\n"
+	data += """<table class="table">
+<thead>
+	<tr>
+		<th>MFG</th>
+		<th>Liquor</th>
+		<th>Type</th>
+	</tr>
+</thead>
+<tbody>"""
+
 	print db._bottle_types_db
-	for i in db.get_liquor_inventory():
+	for i in db._bottle_types_db:
 		print i
-		data += "<li>%s, %s</li>" % (i[0],i[1])
-	data += "<ol></body></html>"
+		data += "<tr><td>%s</td><td>%s</td><td>%s</td>" % (i[0],i[1],i[2])
+	data += "</tbody></table></body></html>"
 	return data
 
 def form():
 	return head_html("convert unitz") + """
 	<h1>Enter amount to be Converted to mL</h1>
-	<form action='recv'>
+	<form action='recv_convert'>
 		<input type='text' name='amount' size'20'>
 		<input class="btn" type='submit'>
 	</form>
 </body>
 </html>
 """
+
+def add_liq_form():
+	return head_html("add a new liquor type") + """
+	<h1>Enter new liquor type information here</h1>
+	<form action='recv_addliqtyp'>
+		<input type='text' name='mfg' placeholder='mfg'>
+		<input type='text' name='liquor' placeholder='liquor'>
+		<input type='text' name='typ' placeholder='type'>
+		<input class="btn" type='submit'>
+	</form>
+</body>
+</html>"""
 
 def head_html(title):
 	return """\
@@ -242,12 +301,12 @@ def javascript():
 if (__name__ == '__main__'):
 	import random, socket
 	port = random.randint(8000, 9999)
-    
+	
 	app = SimpleApp()
-    
+	
 	httpd = make_server('', port, app)
 	print "Serving on port %d..." % port
 	print "Try using a Web browser to go to http://%s:%d/" % \
-          (socket.getfqdn(), port)
+		  (socket.getfqdn(), port)
 	httpd.serve_forever()
 
