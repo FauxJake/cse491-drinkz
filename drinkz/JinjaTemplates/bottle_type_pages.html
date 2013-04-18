@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<h1 class="page-header">{{ title }}</h1>
+
+<table class="table">
+<thead>
+	<tr>
+		{% for item in theaders %}
+		<th>{{ item|e|title }}</th>
+		{% endfor %}
+	</tr>
+</thead>
+<tbody>
+
+{% for item in tcontent %}
+<tr>
+	<td>{{ item[0]|title }}</td>
+	<td>{{ item[1]|title }}</td>
+	<td>{{ item[2]|title }}</td>
+</tr>
+
+{% else %}
+    <tr class="alert alert-danger"><td><em>no items found</em></td><td></td><td></td></tr>
+{% endfor %}
+
+</tbody>
+
+{% endblock %}

@@ -18,7 +18,7 @@ def save_db(filename):
 	try:
 		print "in save:\nfileName: %s\n" % filename
 		fp = open(filename, 'wb')
-		tosave = (_bottle_types_db, _inventory_db)
+		tosave = (_bottle_types_db, _inventory_db, _recipes)
 		print "ToSave: ", tosave
 		dump(tosave, fp)
 
@@ -33,11 +33,11 @@ def load_db(filename):
 	try:
 		basepath = os.path.dirname(__file__)
 		filepath = os.path.abspath(os.path.join(basepath, "..",filename))
-		global _bottle_types_db, _inventory_db
+		global _bottle_types_db, _inventory_db, _recipes
 		fp = open(filename, 'rb')
 
 		loaded = load(fp)
-		(_bottle_types_db, _inventory_db) = loaded
+		(_bottle_types_db, _inventory_db, _recipes) = loaded
 
 		print "LOADED: ", loaded
 
@@ -116,7 +116,7 @@ def convert_to_ml(amount):
 			total += float(amount) * 946.353
 		elif units == "pt" or units == "pint":
 			total += float(amount) * 473.176
-		elif units == "liter" or units == "L":
+		elif units == "liter" or units == "l":
 			total += float(amount) * 1000.0
 		return total
 
@@ -126,23 +126,18 @@ def add_bottle_type(mfg, liquor, typ):
 	try:
 		_bottle_types_db.add((mfg, liquor, typ))
 		print "added to database"
-		print _bottle_types_db
-
-		save_db('db.txt')
-		"saved database"
+		print "current bottle-type database: ", _bottle_types_db
 		return True
-	except Exception, e:
-		print "exception" + e.message
-		return False
-	
 
+	except Exception, e:
+		raise e
+	
 def _check_bottle_type_exists(mfg, liquor):
-	load_db('db.txt')
-	print "DB: ",_inventory_db
+	print "current inventory db: ",_inventory_db
+	print "searching for %s, %s" % (mfg,liquor)
 	for (m, l, _) in _bottle_types_db:
 		if mfg == m and liquor == l:
 			return True
-
 	return False
 
 def add_to_inventory(mfg, liquor, amount):
@@ -153,7 +148,6 @@ def add_to_inventory(mfg, liquor, amount):
 
 	amount = convert_to_ml(amount)
 	_inventory_db[(mfg,liquor)] = amount
-	save_db('db.txt')
 
 def check_inventory(mfg, liquor):
 	for key in _inventory_db.keys():
@@ -181,6 +175,5 @@ def get_liquor_amount(mfg, liquor):
 
 def get_liquor_inventory():
 	"Retrieve all liquor types in inventory, in tuple form: (mfg, liquor)."
-	load_db('db.txt')
 	for key in _inventory_db.keys():
 		yield key

@@ -3,17 +3,35 @@ import sys
 import _mypath
 
 import drinkz.db
+import drinkz.recipes
 
 from drinkz.db import save_db, load_db
 
 def main(args):
-	filename = args[1]
+	filename = 'db.txt'
+
+	drinkz.db.add_bottle_type('Three Olives', 'Vodka', 'flavored vodka')
+	drinkz.db.add_to_inventory('Three Olives', 'Vodka', '750 ml')
 
 	drinkz.db.add_bottle_type('Johnnie Walker', 'black label', 'blended scotch')
 	drinkz.db.add_to_inventory('Johnnie Walker', 'black label', '500 ml')
 
 	drinkz.db.add_bottle_type('Uncle Herman\'s', 'moonshine', 'blended scotch')
 	drinkz.db.add_to_inventory('Uncle Herman\'s', 'moonshine', '5 liter')
+
+	drinkz.db.add_bottle_type('Gray Goose', 'vodka', 'unflavored vodka')
+	drinkz.db.add_to_inventory('Gray Goose', 'vodka', '1 liter')
+
+	drinkz.db.add_bottle_type('Rossi', 'extra dry vermouth', 'vermouth')
+	drinkz.db.add_to_inventory('Rossi', 'extra dry vermouth', '24 oz')
+
+	r = drinkz.recipes.Recipe('scotch on the rocks', [('blended scotch',
+												   '4 oz')])
+
+	drinkz.db.add_recipe(r)
+
+	r1 = drinkz.recipes.Recipe('Vomit Fest', [('moonshine', '6 oz'), ('flavored vodka', '6 oz'), ('apple juice','3 oz')])
+
 
 	save_db(filename)
 

@@ -1,0 +1,45 @@
+<!DOCTYPE HTML 5.0>
+<html>
+<head>
+	{% block head %}
+	<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+	<style type="text/css">
+		body {
+			padding-top: 60px;
+			padding-bottom: 80px;
+		}
+		.hero-unit {
+			margin-top: 30px;
+		}
+	</style>
+	<title>{% block title %}{% endblock %} - My CSE491 App</title>
+	{% endblock %}
+</head>
+<body>
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="brand" href="/">Alcoholics No-Anon</a>
+				<ul class="nav">
+					<li><a href="recipes_list">All the Recipes!</a></li>
+					<li><a href="inventory">All the Inventory!</a></li>
+					<li><a href="liquor_types">All the Liquor!</a></li>
+					<li><a href="convert">Unit Converter</a></li>
+					<li><a href="enter_liq_types">Add Sum Bottle Type</a></li>
+					<li><a href="enter_liq_inventory">Add Sum Booze</a></li>
+					<li><a href="add_recipe">Got A Good Recipe?</a></li>
+				</ul>
+			</div>
+	</div>
+	<div class="container">
+		<div class="row">
+			<div class="span12" id="content">
+				{% block content %}
+				{% endblock %}
+			</div>
+		</div>
+	</div>
+</body>
+{% block javascript %}
+{% endblock %}
+</html>

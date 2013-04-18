@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<h1 class="page-header">{{ title }}</h1>
+
+<form class="form-horizontal" action='{{ action }}'>
+	<fieldset>
+		<legend>{{ formTitle }}</legend>
+		{% for i in formItems %}
+			<div class="control-group">
+				<label class="control-label" for="{{ i|lower }}">{{ i }}</label>
+				<div class="controls">
+					<input type="text" name="{{ i|lower }}" id ="{{ i|lower }}" placeholder="{{i|upper}}">
+				</div>
+			</div>
+		{% endfor %}
+	</fieldset>	
+	<button class="controls btn btn-primary" id="btnSubmit">{{ btnText }}</button>
+</form>
+
+{% endblock %}
+
+{% block javascript %}
+<script type="text/javascript">
+	//TODO: maybe link jquery and bootstrap modal stuff and use ajax/$.getJSON to grab conversion results
+</script>
+{% endblock %}

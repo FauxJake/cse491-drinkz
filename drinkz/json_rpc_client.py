@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 import sys
-import json as simplejson
+import simplejson
 import urllib2
 
 import db, recipes, app

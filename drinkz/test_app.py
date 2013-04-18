@@ -37,7 +37,7 @@ def test_recipes():
 	text = "".join(results)
 	status, headers = d['status'], d['headers']
     
-	assert text.find('scotch on the rocks') != -1, text
+	assert text.find('Scotch on the Rocks') != -1, text
 	assert ('Content-type', 'text/html') in headers
 	assert status == '200 OK'
 
@@ -56,6 +56,6 @@ def test_index():
 	text = "".join(results)
 	status, headers = d['status'], d['headers']
     
-	assert text.find('Welcome to the Alcohol Thing website') != -1, text
+	assert text.find('Hello, Alcoholics!') != -1, text
 	assert ('Content-type', 'text/html') in headers
 	assert status == '200 OK'
