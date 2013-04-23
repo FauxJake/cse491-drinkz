@@ -30,9 +30,6 @@ def main(args):
 			if not buf:
 				break
 			sys.stdout.write(buf)
-		#waits inf for response i think... why no response?
-
-		#print buf
 
 if __name__ == '__main__':
    exit_code = main(sys.argv)

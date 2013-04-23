@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<data>
+    <recipe name="gimlit">
+        <ingredient amount="4 oz">water</ingredient>
+        <ingredient amount="1 oz">lime juice</ingredient>
+        <ingredient amount="4 oz">vodka</ingredient>
+        <ingredient amount="1 oz">ice</ingredient>
+    </recipe>
+    <recipe name="Jack and Coke">
+        <ingredient amount="6 oz">whiskey</ingredient>
+        <ingredient amount="4 oz">coke</ingredient>
+        <ingredient amount="1 oz">ice</ingredient>
+    </recipe>
+</data>

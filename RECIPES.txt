@@ -1,0 +1,17 @@
+Recipes are loaded from xml files in the following format:
+
+<?xml version="1.0"?>
+<data>
+	<recipe name="{name of recipe}">
+		<ingredient amount="{amount of ingredient}">{name of ingredient}</ingredient>
+		<ingredient amount="{amount of ingredient}">{name of ingredient}</ingredient>
+		<ingredient amount="{amount of ingredient}">{name of ingredient}</ingredient>
+		.
+		.
+		.
+	</recipe>
+	<recipe name="{name of recipe}">
+	...etc.
+</data>
+
+use Python2.7 bin/load_recipes data_file.xml from the command line

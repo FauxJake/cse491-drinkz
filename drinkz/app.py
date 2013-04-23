@@ -241,9 +241,15 @@ class SimpleApp(object):
 		method = rpc_request['method']
 		params = rpc_request['params']
 
+		print "PARAMS: ", params
+
 		rpc_fn_name = 'rpc_' + method
 		fn = getattr(self, rpc_fn_name)
-		result = fn(*params)
+		if type(params) == dict:
+			flatten_unicode_keys(params)
+			result = fn(**params)
+		else:
+			result = fn(*params)
 
 		response = { 'result' : result, 'error' : None, 'id' : 1 }
 		response = simplejson.dumps(response)
@@ -275,6 +281,21 @@ class SimpleApp(object):
 			inventory += "\n"
 
 		return inventory
+
+	def rpc_add_recipe(self,**params):
+		name = params["name"]
+		ingredients = params["ingredients"]
+		
+		if len(name) > 0 and len(ingredients) > 0:
+			try:
+				r = recipes.Recipe(name,ingredients)
+
+				db.add_recipe(r)
+				return True
+			except Exception, e:
+				return e.message
+		return False
+
 
 
 
@@ -376,7 +397,7 @@ def add_recipe():
 	return JinjaLoader('form_pages.html',vars)
 
 def error(content):
-	vars= dict(title="you done messed up",
+	vars = dict(title="you done messed up",
 		content= "<p class='alert alert-danger'><strong>" + content + "</strong></p>")
 
 	return JinjaLoader('blank.html',vars)
@@ -385,6 +406,13 @@ def error(content):
 #-----HELPERS------
 def is_empty(item):
 	return True if len(item)==0 else False
+
+def flatten_unicode_keys(d):
+	for k in d:
+		if isinstance(k, unicode):
+			v = d[k]
+			del d[k]
+			d[str(k)] = v
 
 if (__name__ == '__main__'):
 	import random, socket

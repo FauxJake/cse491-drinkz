@@ -24,7 +24,7 @@ def test_recipes():
 
 	#initialize the app
 	environ = {}
-	environ['PATH_INFO'] = '/recipes'
+	environ['PATH_INFO'] = '/recipes_list'
 
 	d = {}
 	def my_start_response(s, h, return_in=d):
@@ -37,7 +37,7 @@ def test_recipes():
 	text = "".join(results)
 	status, headers = d['status'], d['headers']
     
-	assert text.find('Scotch on the Rocks') != -1, text
+	assert text.find('<td>Scotch On The Rocks</td>') != -1, text
 	assert ('Content-type', 'text/html') in headers
 	assert status == '200 OK'
 
