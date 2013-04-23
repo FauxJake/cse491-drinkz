@@ -296,6 +296,19 @@ class SimpleApp(object):
 				return e.message
 		return False
 
+	def rpc_add_bottle_type(self,*params):
+		try:
+			db.add_bottle_type(params[0],params[1],params[2])
+			return True
+		except Exception, e:
+			return False
+
+	def rpc_add_to_inventory(self,*params):
+		try:
+			db.add_to_inventory(params[0],params[1],params[2])
+			return True
+		except Exception, e:
+			return False
 
 
 
