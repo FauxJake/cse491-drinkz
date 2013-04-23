@@ -1,0 +1,5 @@
+In a terminal window:
+
+1. enter HW5_part_4 directory
+2. run as: Python2.7 hw5_app.py
+3. in a seperate terminal window run nosetests

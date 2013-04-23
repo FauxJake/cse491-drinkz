@@ -6,7 +6,6 @@ import socket, sys
 from drinkz.app import SimpleApp
 from wsgiref.simple_server import make_server
 
-
 def main(args):
 	if len(args) != 3:
 		print "Error, not enough args"
@@ -20,7 +19,6 @@ def main(args):
 			address = socket.gethostbyname(host);
 		except socket.gaierror:
 			print "Nope"
-			return 0
 
 		s.connect((host,port))
 		s.send("GET / HTTP/1.0\r\n\r\n")
