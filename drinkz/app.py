@@ -33,11 +33,7 @@ html_headers = [('Content-type', 'text/html')]
 class SimpleApp(object):
 	def __call__(self, environ, start_response):
 		path = environ['PATH_INFO']
-		print path
 		fn_name = dispatch.get(path, 'error')
-		print fn_name
-		print os.path.realpath(__file__)
-
 		# retrieve 'self.fn_name' where 'fn_name' is the
 		# value in the 'dispatch' dictionary corresponding to
 		# the 'path'.
@@ -377,7 +373,8 @@ def convert():
 		btnText = 'Convert Mah!', 
 		formItems = ["Amount"], 
 		action = 'recv_convert', 
-		formTitle = 'Enter an Amount to Convert')
+		formTitle = 'Enter an Amount to Convert',
+		isAjaxCall = "True")
 
 	return JinjaLoader('form_pages.html',vars)
 

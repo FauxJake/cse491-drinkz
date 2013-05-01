@@ -16,13 +16,53 @@
 			</div>
 		{% endfor %}
 	</fieldset>	
-	<button class="controls btn btn-primary" id="btnSubmit">{{ btnText }}</button>
+	{% if isAjaxCall == "True" %}
+	<button type="button" class="controls btn btn-primary" id="btnSubmitAjax">{{ btnText }}</button>
+	{% else %}
+	<button class="controls btn btn-primary">{{ btnText }}</button>
+	{% endif %}
 </form>
 
 {% endblock %}
 
+{% block modal %}
+<div id="ResponseModal" class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Cool Website Says: </h3>
+  </div>
+  <div class="modal-body">
+  	<h4>Converted is:</h4>
+    <h4 id ="responseText">Nothing to See Here!</h4>
+  </div>
+  <div class="modal-footer">
+    <a href="#" data-dismiss="modal" class="btn btn-primary">Close</a>
+  </div>
+</div>
+
+{% endblock %}
+
 {% block javascript %}
-<script type="text/javascript">
-	//TODO: maybe link jquery and bootstrap modal stuff and use ajax/$.getJSON to grab conversion results
+<script>
+		$('#btnSubmitAjax').on('click',function (event) {
+			event.preventDefault()
+
+			d = {};
+			d["method"] ='convert_units_to_ml';
+			d["params"] = ['40 oz'];
+			d["id"] = 1;
+			$.ajax({
+				url: '/rpc',
+				type: 'POST',
+				data: JSON.stringify(d),
+				contentType: 'application/json; charset=utf-8',
+    			dataType: 'json',
+    			success: function(data){
+					console.log(data);
+					$('#responseText').text(data["result"] + " mL")
+					$('#ResponseModal').modal('show')
+				}
+			});
+		});
 </script>
 {% endblock %}
