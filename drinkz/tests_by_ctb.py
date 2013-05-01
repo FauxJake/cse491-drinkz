@@ -34,7 +34,7 @@ def test_uniqify_inventory():
     db.add_to_inventory('Johnnie Walker', 'Black Label', '25 ml')
 
     uniq = set()
-    for mfg, liquor in db.get_liquor_inventory():
+    for mfg, liquor, amount in db.get_liquor_inventory():
         assert (mfg, liquor) not in uniq, "dup: %s, %s" % (mfg, liquor)
         uniq.add((mfg, liquor))
 

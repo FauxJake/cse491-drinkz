@@ -3,3 +3,10 @@ It seems that a lot of the use cases involve the ability for a USER to do things
 The user data structure should be able to store relevent information such as a name, possibly a name for a liquor inventory, a home address maybe for party tracking, and other demographics.  The user data structure should be able to tie itself to a unique liquor inventory, so I propose that the individual liquor inventories be stored in a seperate dictionary of the for key = person_id, val = list of liquor, and there be a liquor_inv id stored in the user data dictionary.
 
 The API could include the ability to display all users, locate them, and view their inventories.  And a json-RPC set of functions could do this similarly.  A user could also modify their data (add/remove liquor).
+
+
+IMPLEMENTATION:
+
+Users are stored in the sql database (firstname, lastname, username, password), and can be retrieved via a json rpc call, or via the url host:port/users (link on homepage)
+
+The logging in via host:port/login uses the data in the users table and checks to make sure that the user is valid before setting the cookie.  If the login is a success, the cookie is set and you are returned to the homepage.  Otherwise, an error message is displayed.

@@ -80,6 +80,13 @@ def check_username_and_pass(username,password):
 
 	return False
 
+def get_all_users():
+	_c.execute("SELECT * FROM users")
+	results = _c.fetchall()
+
+	for u in results:
+		yield (u[0],u[1],u[2],u[3],u[4])
+
 def available_recipes():
 	results = []
 	_c.execute("SELECT * FROM recipes")
@@ -168,9 +175,9 @@ def _check_bottle_type_exists(mfg, liquor):
 	#print "current inventory db: ", _inventory_db
 	#print "searching for %s, %s" % (mfg,liquor)
 	_c.execute("SELECT * FROM bottle_types WHERE mfg = ? AND liquor = ?", (mfg,liquor))
-	for (m, l, _) in _bottle_types_db:
-		if mfg == m and liquor == l:
-			return True
+	results = _c.fetchall()
+	if len(results) != 0:
+		return True
 	return False
 
 def add_to_inventory(mfg, liquor, amount):
@@ -217,6 +224,7 @@ def get_liquor_inventory():
 	"Retrieve all liquor types in inventory, in tuple form: (mfg, liquor, amount)."
 	_c.execute("SELECT mfg, liquor, amount FROM inventory")
 	results = _c.fetchall()
+	print results
 	for i in results:
 		yield (i[0],i[1],i[2])
 

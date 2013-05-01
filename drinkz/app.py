@@ -30,7 +30,8 @@ dispatch = {
 	'/recv_convert' : 'recv_convert',
 	'/rpc'  : 'dispatch_rpc',
 	'/login' : 'login',
-	'/recv_login' : 'recv_login'
+	'/recv_login' : 'recv_login',
+	'/users' : 'users'
 }
 
 html_headers = [('Content-type', 'text/html')]
@@ -84,6 +85,12 @@ class SimpleApp(object):
 			start_response('200 OK', list(html_headers))
 			data=login(True)
 			return data
+
+	def users(self,environ,start_response):
+		data = users()
+
+		start_response('200 OK', list(html_headers))
+		return data
 
 	def recipes_list(self,environ,start_response):
 		data = recipes_list()
@@ -305,16 +312,10 @@ class SimpleApp(object):
 		return recipes
 
 	def rpc_get_liquor_inventory(self):
-		basepath = os.path.dirname(__file__)
-		filepath = os.path.abspath(os.path.join(basepath, "..","db.txt"))
-		db.load_dumped_db(filepath)
-
-		inventory = ""
-		for i in db._inventory_db:
-			inventory += str(i)
-			inventory += "\n"
-
-		return inventory
+		results = []
+		for i in db.get_liquor_inventory():
+			results.append(i)
+		return results
 
 	def rpc_add_recipe(self,**params):
 		name = params["name"]
@@ -344,6 +345,11 @@ class SimpleApp(object):
 		except Exception, e:
 			return False
 
+	def rpc_get_users(self):
+		results = []
+		for i in db.get_all_users():
+			results.append(i)
+		return results
 
 
 #HTML Generation Functions and such
@@ -386,6 +392,17 @@ def login(loginFail):
 	filename = "form_pages.html"
 
 	return JinjaLoader(filename,vars)
+
+def users():
+	tcontent = []
+	for i in db.get_all_users():
+		tcontent.append(i)
+
+	vars = dict(title="All The Users!",
+		theaders = ["User Id","First Name","Last Name", "User Name", "Password"],
+		tcontent = tcontent)
+
+	return JinjaLoader('bottle_type_pages.html', vars)
 
 def liq_typs():
 	tcontent = []

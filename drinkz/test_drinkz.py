@@ -98,7 +98,7 @@ def test_get_liquor_inventory():
     db.add_to_inventory('Johnnie Walker', 'Black Label', '1000 ml')
 
     x = []
-    for mfg, liquor in db.get_liquor_inventory():
+    for mfg, liquor,amount in db.get_liquor_inventory():
         x.append((mfg, liquor))
 
     assert x == [('Johnnie Walker', 'Black Label')], x

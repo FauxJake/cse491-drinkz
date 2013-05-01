@@ -32,6 +32,7 @@ def initialize_db():
 											 ('vermouth',
 											  '1.5 oz')])
 	db.add_recipe(r)
+	db._c.execute('INSERT INTO users (firstname,lastname,username,pass) VALUES ("test1_first","test1_last","test1_username","guest")')
 	db.dump_db('db.txt')
 
 
@@ -113,6 +114,31 @@ def test_rpc_get_liqour_inventory():
 	
 	assert text.find("Johnnie Walker") != -1, text
 	assert text.find("Uncle Herman's") != -1, text
+
+def test_get_users():
+	initialize_db()
+	myApp = app.SimpleApp()
+
+
+	environ = {}
+	environ['REQUEST_METHOD'] = 'POST'
+	environ['PATH_INFO'] = '/rpc'
+	
+
+	d = dict(method='get_users', params=[] ,id=1)
+	encoded = simplejson.dumps(d)
+	environ['wsgi.input'] = StringIO(encoded)
+	environ['CONTENT_LENGTH'] = 1000
+	
+	def my_start_response(s, h, return_in=d):
+		d['status'] = s
+		d['headers'] = h
+		
+	results = myApp.__call__(environ,my_start_response)
+	text = "".join(results)
+	
+	assert text.find("test1_last") != -1, text
+	assert text.find("guest") != -1, text
 
 
 #------------------------------------------------------------------------------
