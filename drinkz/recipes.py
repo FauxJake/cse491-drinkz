@@ -12,37 +12,41 @@ class Recipe(object):
 		print "Recipe Count: ", Recipe.recipeCnt
 
 	def need_ingredients(self):
+		print "SELF.IN: ",self.Ingredients
 		missing = []
 		stock = dict() #contains key: (mfg,liquor,typ) value: amount
 
 		#First: fill a dict with our stock that matches the liquor type
 		for i in self.Ingredients:
 			for item in db.check_inventory_for_type(i[0]): #returns mfg/liquor tuples with liquor == {ingredient name}
-				search = (item[0],item[1]) # (mfg,liquor) tuple for dict
-
-				amount = db._inventory_db[search] #fetches from the inventory the amount
+				#fetches from the inventory the amount
+				db._c.execute("SELECT amount FROM inventory WHERE \
+					mfg = ? AND liquor = ?",(item[1],item[2]))
+				amount = int(db._c.fetchone()[0])
 
 				if item in stock.keys(): #add to temp dictionary
-					stock[item] += float(amount)
+					stock[(item[2],item[3])] += float(amount)
 				else:
-					stock[item] = float(amount)
+					stock[(item[2],item[3])] = float(amount)
+
 
 		if len(stock) == 0:
-			#no ingridients of that type(s) in db
+			#no ingredients of that type(s) in db
 			for i in self.Ingredients:
 				amount = db.convert_to_ml(i[1])
 				missing.append((i[0],amount))
 			return missing
 
 		#next: check to see if we have bottles with enough liquor for each ingredient in the recipe (to refrain from mixing bottles)
-		for i in self.Ingredients:
+		for i in self.Ingredients:			
 			needed = db.convert_to_ml(i[1])
 			#print "\nWe need %s ml of %s" % (needed, i[0])
 			most = 0 #greatest amount per bottle, overwritable
 			flag = False  #False implies not enough liquor in any given bottle to satisfy the ingredient amount
 			for item, amt in stock.items():
 				#print "looking for greatest amount: %s -- %s?" % (item, amt)
-				if item[2] == i[0]:
+				print item[1], i[0]
+				if str(item[1]) == str(i[0]):
 					if amt >= needed:
 						flag = True
 						#print "	greater than needed!"

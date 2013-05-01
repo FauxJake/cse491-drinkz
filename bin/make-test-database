@@ -5,7 +5,7 @@ import _mypath
 import drinkz.db
 import drinkz.recipes
 
-from drinkz.db import save_db, load_db
+from drinkz.db import dump_db, load_dumped_db
 
 def main(args):
 	filename = 'db.txt'
@@ -33,7 +33,7 @@ def main(args):
 	r1 = drinkz.recipes.Recipe('Vomit Fest', [('moonshine', '6 oz'), ('flavored vodka', '6 oz'), ('apple juice','3 oz')])
 
 
-	save_db(filename)
+	dump_db(filename)
 
 	return 0
 

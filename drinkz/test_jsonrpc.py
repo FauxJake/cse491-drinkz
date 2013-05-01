@@ -32,7 +32,7 @@ def initialize_db():
 											 ('vermouth',
 											  '1.5 oz')])
 	db.add_recipe(r)
-	db.save_db('db.txt')
+	db.dump_db('db.txt')
 
 
 def test_rpc_convert_oz_to_ml():

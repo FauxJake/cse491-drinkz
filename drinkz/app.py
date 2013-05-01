@@ -5,7 +5,10 @@ import json as simplejson
 import db, recipes
 
 import sys
-sys.path.insert(0, '/Library/Python/2.6/site-packages/Jinja2-2.6-py2.6.egg')
+try:
+	sys.path.insert(0, '/Library/Python/2.6/site-packages/Jinja2-2.6-py2.6.egg')
+except Exception, e:
+	pass
 import jinja2
 
 dispatch = {
@@ -57,7 +60,7 @@ class SimpleApp(object):
 		return [data]
 
 	def inventory(self, environ, start_response):
-		db.load_db('db.txt')
+		#db.load_dumped_db('db.txt')
 		#print db._inventory_db
 		data = inventory()
 
@@ -65,7 +68,7 @@ class SimpleApp(object):
 		return [data]
 
 	def types(self, environ, start_response):
-		db.load_db('db.txt')
+		db.load_dumped_db('db.txt')
 		data = liq_typs()
 
 		start_response('200 OK', list(html_headers))
@@ -261,7 +264,7 @@ class SimpleApp(object):
 	def rpc_get_recipe_names(self):
 		basepath = os.path.dirname(__file__)
 		filepath = os.path.abspath(os.path.join(basepath, "..","db.txt"))
-		db.load_db(filepath)
+		db.load_dumped_db(filepath)
 
 		recipes = ""
 		for r in db.get_all_recipes():
@@ -273,7 +276,7 @@ class SimpleApp(object):
 	def rpc_get_liquor_inventory(self):
 		basepath = os.path.dirname(__file__)
 		filepath = os.path.abspath(os.path.join(basepath, "..","db.txt"))
-		db.load_db(filepath)
+		db.load_dumped_db(filepath)
 
 		inventory = ""
 		for i in db._inventory_db:
@@ -342,7 +345,7 @@ def index():
 
 def liq_typs():
 	tcontent = []
-	for i in db._bottle_types_db:
+	for i in db.get_bottle_types():
 		tcontent.append(i)
 
 	vars = dict(title = 'Bottle Types', theaders=["MFG","Liquor","Type"],tcontent = tcontent)
@@ -351,8 +354,8 @@ def liq_typs():
 
 def inventory():
 	tcontent = []
-	for key, val in db._inventory_db.items():
-		tup = (key[0], key[1], val)
+	for i in db.get_liquor_inventory():
+		tup = (i[0], i[1], i[2])
 		tcontent.append(tup)
 
 	vars = dict(title = 'Liquor Inventory', theaders=["MFG","Liquor","Amount (mL)"],tcontent = tcontent)
