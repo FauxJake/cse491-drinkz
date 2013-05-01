@@ -6,15 +6,30 @@
 		<h1>Hello, Alcoholics!</h1>
 		<p>This is a Project for CSE491 at Michigan State University.  It explores the basic concepts
 			of database-backed web design, javascript, WSGI servers, and Jinja2 templating. In order to navigate, use the navbar at the top of each page ^^^</p>
-		<p><button id="btnAlert" onclick="Alert()" class="btn btn-primary btn-large">Cool!</button>
+		<p><button id="btnAlert" class="btn btn-success btn-large">Cool!</button>
 		</p>
+</div>
+{% endblock %}
+
+{% block modal %}
+<div id="HelloWorldModal" class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Cool Website Says: </h3>
+  </div>
+  <div class="modal-body">
+    <h4>I Know Right?</h4>
+  </div>
+  <div class="modal-footer">
+    <a href="#" data-dismiss="modal" class="btn btn-primary">Close</a>
+  </div>
 </div>
 {% endblock %}
 
 {% block javascript %}
 <script type="text/javascript">
-		function Alert(){
-			alert("I Know Right?!?!!");
-		}
+		$('#btnAlert').on('click',function () {
+			$('#HelloWorldModal').modal('show');
+		})
 </script>
 {% endblock %}
