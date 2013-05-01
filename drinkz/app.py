@@ -3,6 +3,8 @@ from wsgiref.simple_server import make_server
 import urlparse, os
 import json as simplejson
 import db, recipes
+from Cookie import SimpleCookie
+import uuid
 
 import sys
 try:
@@ -11,6 +13,7 @@ except Exception, e:
 	pass
 import jinja2
 
+usernames = {}
 dispatch = {
 	'/' : 'index',
 	'/recipes_list' : 'recipes_list',
@@ -25,7 +28,9 @@ dispatch = {
 	'/add_recipe' : 'add_recipe',
 	'/recv_addrecipe' : 'recv_addrecipe',
 	'/recv_convert' : 'recv_convert',
-	'/rpc'  : 'dispatch_rpc'
+	'/rpc'  : 'dispatch_rpc',
+	'/login' : 'login',
+	'/recv_login' : 'recv_login'
 }
 
 html_headers = [('Content-type', 'text/html')]
@@ -50,6 +55,36 @@ class SimpleApp(object):
 		start_response('200 OK', list(html_headers))
 		return [data]
 
+	def login(self,environ,start_response):
+		data = login(False)
+		start_response('200 OK', list(html_headers))
+
+		return data
+
+	def recv_login(self,environ,start_response):
+		formdata = environ['QUERY_STRING']
+		results = urlparse.parse_qs(formdata)
+
+		username = results["username"][0]
+		password = results["password"][0]
+
+		isValid = db.check_username_and_pass(username,password)
+		
+		if isValid:
+			k = str(uuid.uuid4())
+
+			html_headers.append(('Location', '/status'))
+			html_headers.append(('Set-Cookie', 'login=%s' % k))
+
+			start_response('302 Found', list(html_headers))
+			data=index()
+			return [data]
+
+		else:
+			start_response('200 OK', list(html_headers))
+			data=login(True)
+			return data
+
 	def recipes_list(self,environ,start_response):
 		data = recipes_list()
 		start_response('200 OK', list(html_headers))
@@ -68,7 +103,7 @@ class SimpleApp(object):
 		data = liq_typs()
 
 		start_response('200 OK', list(html_headers))
-		return	data
+		return  data
 
 	def error(self, environ, start_response):
 		status = "404 Not Found"
@@ -337,7 +372,20 @@ def index():
 	filename = 'index_page.html'
 
 	return JinjaLoader(filename,vars)
+
+def login(loginFail):
+	vars = dict(title="Login to teh Webz",
+		btnText="Loginz!",
+		formItems=["UserName","Password"],
+		action="recv_login",
+		formTitle="Login Pl0x, kthx")
 	
+	if loginFail:
+		vars["fail"] = "True"
+
+	filename = "form_pages.html"
+
+	return JinjaLoader(filename,vars)
 
 def liq_typs():
 	tcontent = []
@@ -346,7 +394,7 @@ def liq_typs():
 
 	vars = dict(title = 'Bottle Types', theaders=["MFG","Liquor","Type"],tcontent = tcontent)
 
-	return JinjaLoader('bottle_type_pages.html', vars)	
+	return JinjaLoader('bottle_type_pages.html', vars)  
 
 def inventory():
 	tcontent = []

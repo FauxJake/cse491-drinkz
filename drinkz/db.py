@@ -72,6 +72,14 @@ class LiquorMissing(Exception):
 class DuplicateRecipeName(Exception):
 	pass
 
+def check_username_and_pass(username,password):
+	_c.execute("SELECT * FROM users WHERE username = ? AND pass = ?", (username,password))
+	results = _c.fetchall()
+	if len(results) != 0:
+		return True
+
+	return False
+
 def available_recipes():
 	results = []
 	_c.execute("SELECT * FROM recipes")

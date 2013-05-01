@@ -9,19 +9,35 @@
 		<p><button id="btnAlert" class="btn btn-success btn-large">Cool!</button>
 		</p>
 </div>
+
+<div class="row">
+	<div class="span6">
+		<h2>List of Actions</h2>
+		<ul class="unstyled">
+			<li><a href="login">Login here!</a></li>
+		  	<li><a href="recipes_list">All the Recipes!</a></li>
+			<li><a href="inventory">All the Inventory!</a></li>
+			<li><a href="liquor_types">All the Liquor!</a></li>
+			<li><a href="convert">Unit Converter</a></li>
+			<li><a href="enter_liq_types">Add Sum Bottle Type</a></li>
+			<li><a href="enter_liq_inventory">Add Sum Booze</a></li>
+			<li><a href="add_recipe">Got A Good Recipe?</a></li>
+		</ul>
+	</div>
+</div>
 {% endblock %}
 
 {% block modal %}
 <div id="HelloWorldModal" class="modal hide fade">
   <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3>Cool Website Says: </h3>
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h3>Cool Website Says: </h3>
   </div>
   <div class="modal-body">
-    <h4>I Know Right?</h4>
+	<h4>I Know Right?</h4>
   </div>
   <div class="modal-footer">
-    <a href="#" data-dismiss="modal" class="btn btn-primary">Close</a>
+	<a href="#" data-dismiss="modal" class="btn btn-primary">Close</a>
   </div>
 </div>
 {% endblock %}
